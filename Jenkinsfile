@@ -1,39 +1,40 @@
-pipeline {
-    agent any // Uruchom na dowolnym dostępnym agencie
+pipeline{
+	agent any
+	environment{
+		MY_API_KEY = credentials('weather-api-key')
+		IMAGE_NAME = "weather-app-practice"
+	}
+	stages{
+		stage('1. Setup'){
+			steps{
+				deleteDir()
+				sh 'git clone https://github.com/dominik-mzg/jenkins1.git .'
+			}
+		}
 
-    stages {
-        stage('Przygotowanie') {
-            steps {
-                echo 'Pobieranie zależności...'
-                // Używamy obrazu node, żeby nie instalować go na systemie
-                sh 'npm install'
-            }
-        }
+		stage('2. Budowanie i Deploy'){
+            		steps {
+                		script {
+                    		// 1. Zabij stary kontener, żeby zwolnić port 3000
+                    		sh "docker stop ${IMAGE_NAME} || true"
+                    		sh "docker rm ${IMAGE_NAME} || true"
+                    
+                    		// 2. Buduj obraz
+                    		sh "docker build -t ${IMAGE_NAME}:latest ."
+                    
+                    		// 3. Odpal nowy kontener z kluczem
+                    		sh "docker run -d -p 3000:3000 --name ${IMAGE_NAME} -e MY_API_KEY=${MY_API_KEY} ${IMAGE_NAME}:latest"
+			}
+		}
 
-        stage('Testy Jednostkowe') {
-            steps {
-                echo 'Uruchamiam testy...'
-                sh 'npm test'
-            }
-        }
-
-        stage('Budowanie (Build)') {
-            steps {
-                echo 'Pakowanie aplikacji...'
-                sh 'tar -czf app.tar.gz app.js package.json'
-            }
-        }
-    }
-
-    post {
-        always {
-            echo 'Koniec pracy. Czyszczenie środowiska.'
-        }
-        success {
-            echo 'SUKCES: Aplikacja przetestowana i gotowa! Mozesz ją uruchomic.'
-        }
-        failure {
-            echo 'BŁĄD: Testy nie przeszły, sprawdź logi!'
-        }
-    }
+	}
+	stage('3. Test'){
+		steps{
+			sleep 3
+			sh 'curl http://localhost:3000'
+		}
+	}
 }
+		
+}
+
