@@ -33,5 +33,3 @@ pipeline{
                 sh "curl http://${IMAGE_NAME}:3000"
             }
         }
-
-
