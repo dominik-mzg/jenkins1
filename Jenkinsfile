@@ -30,8 +30,8 @@ pipeline{
 	}
 	stage('3. Test'){
 		steps{
-			sleep 3
-			sh 'curl http://localhost:3000'
+			sleep 5
+			sh 'curl http://host.docker.internal:3000'
 		}
 	}
 }
