@@ -12,29 +12,25 @@ pipeline{
 			}
 		}
 
-		stage('2. Budowanie i Deploy'){
-            		steps {
-                		script {
-                    		// 1. Zabij stary kontener, żeby zwolnić port 3000
-                    		sh "docker stop ${IMAGE_NAME} || true"
-                    		sh "docker rm ${IMAGE_NAME} || true"
+		stage('2. Budowanie i Deploy') {
+            	  steps {
+                    script {
+                      sh "docker stop ${IMAGE_NAME} || true"
+                      sh "docker rm ${IMAGE_NAME} || true"
+                      sh "docker build -t ${IMAGE_NAME}:latest ."
                     
-                    		// 2. Buduj obraz
-                    		sh "docker build -t ${IMAGE_NAME}:latest ."
-                    
-                    		// 3. Odpal nowy kontener z kluczem
-                    		sh "docker run -d -p 3000:3000 --name ${IMAGE_NAME} -e MY_API_KEY=${MY_API_KEY} ${IMAGE_NAME}:latest"
-			}
-		}
+                    // DODAJEMY: --network moja-siec
+                    sh "docker run -d --network moja-siec --name ${IMAGE_NAME} -p 3000:3000 -e MY_API_KEY=${MY_API_KEY} ${IMAGE_NAME}:latest"
+                }
+            }
+        }
 
-	}
-	stage('3. Test'){
-		steps{
-			sleep 5
-			sh 'curl http://host.docker.internal:3000'
-		}
-	}
-}
-		
-}
+        stage('3. Test Działania') {
+            steps {
+                sleep 5
+                // TERAZ: łączymy się bezpośrednio po nazwie kontenera!
+                // Jenkins musi być w tej samej sieci, żeby to zadziałało
+                sh "curl http://${IMAGE_NAME}:3000"
+            }
+        }
 
