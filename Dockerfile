@@ -17,4 +17,5 @@ COPY . .
 EXPOSE 3000
 
 # Komenda startowa
-CMD ["node", "app.js"]
+CMD ["node", "server.js"]
+
