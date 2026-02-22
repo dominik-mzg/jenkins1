@@ -30,7 +30,7 @@ pipeline {
             echo 'Koniec pracy. Czyszczenie środowiska.'
         }
         success {
-            echo 'SUKCES: Aplikacja przetestowana i gotowa! Mozesz ją uruchomić'
+            echo 'SUKCES: Aplikacja przetestowana i gotowa!'
         }
         failure {
             echo 'BŁĄD: Testy nie przeszły, sprawdź logi!'
