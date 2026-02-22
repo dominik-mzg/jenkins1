@@ -1,21 +1,9 @@
-# Wybieramy obraz bazowy
-FROM node:18-alpine
-
-# Ustawiamy folder roboczy wewnątrz obrazu
+FROM python:3.9-slim
 WORKDIR /app
-
-# Kopiujemy pliki konfiguracyjne
-COPY package*.json ./
-
-# Instalujemy tylko biblioteki produkcyjne (bez testowych)
-RUN npm install --production
-
-# Kopiujemy resztę plików (app.js itp.)
+# Kopiujemy listę bibliotek i instalujemy je
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+# Kopiujemy resztę plików
 COPY . .
-
-# Informujemy, na jakim porcie działa apka (opcjonalnie)
-EXPOSE 3000
-
-# Komenda startowa
-CMD ["node", "server.js"]
-
+EXPOSE 5000
+CMD ["python", "app.py"]

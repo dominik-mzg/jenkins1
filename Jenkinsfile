@@ -20,7 +20,7 @@ pipeline{
                       sh "docker build -t ${IMAGE_NAME}:latest ."
                     
                     // DODAJEMY: --network moja-siec
-                    sh "docker run -d --network moja-siec --name ${IMAGE_NAME} -p 3000:3000 -e MY_API_KEY=${MY_API_KEY} ${IMAGE_NAME}:latest"
+                    sh "docker run -d --network moja-siec --name ${IMAGE_NAME} -p 5000:5000 -e MY_API_KEY=${MY_API_KEY} ${IMAGE_NAME}:latest"
                 }
             }
         }
@@ -30,7 +30,7 @@ pipeline{
                 sleep 5
                 // TERAZ: łączymy się bezpośrednio po nazwie kontenera!
                 // Jenkins musi być w tej samej sieci, żeby to zadziałało
-                sh "curl http://${IMAGE_NAME}:3000"
+                sh "curl http://${IMAGE_NAME}:5000"
             }
         }
     }

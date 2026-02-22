@@ -1,6 +1,0 @@
-{
-  "name": "weather-app",
-  "version": "1.0.0",
-  "scripts": { "start": "node server.js", "test": "echo 'Brak testów - etap pominięty'" },
-  "dependencies": { "express": "^4.18.2" }
-}
